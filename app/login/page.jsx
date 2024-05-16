@@ -2,9 +2,14 @@
 
 import {useState} from "react";
 import Navbar from "@/app/componentes/Navbar";
+import {iniciarSesion} from "@/app/services/login";
+import {useRouter} from "next/navigation";
+import {useAuthStore} from "@/app/store/auth";
 
 const LoginPage = () => {
+    const { loginStore, isLogged, setTipoStore, tipo } = useAuthStore()
 
+    const router = useRouter()
     const INITIAL_FORM_STATE = {
         usuario: '',
         password: ''
@@ -14,7 +19,18 @@ const LoginPage = () => {
 
     const handleIniciarSesion = (event) => {
         event.preventDefault()
-        console.log(form)
+        iniciarSesion(form)
+            .then(async data => {
+                const {valido, mensaje, contenido} = data
+                alert(mensaje)
+                if (valido) {
+                    loginStore()
+                    setTipoStore(contenido.tipo)
+                    console.log(isLogged)
+                    console.log(tipo)
+                    router.push('/olla-comun')
+                }
+            })
     }
     const handleChange = (event) => {
         const { name, value } = event.target
@@ -23,10 +39,10 @@ const LoginPage = () => {
 
     return (
         <>
-            <main className="min-h-screen max-h-screen min-w-screen max-w-screen flex flex-col">
+            <main className="min-h-screen max-h-screen min-w-screen max-w-screen flex flex-col bg-neutral-700">
                 <Navbar/>
                 <section
-                    className="flex items-center justify-center items-center h-screen bg-white">
+                    className="flex items-center justify-center items-center h-screen ">
                     <form
                         className="rounded-lg w-96 bg-neutral-200 opacity-1 px-10 py-10 flex flex-col"
                         onSubmit={handleIniciarSesion}
@@ -39,6 +55,7 @@ const LoginPage = () => {
                                 onChange={handleChange}
                                 // placeholder="12345678"
                                 type="text"
+                                name="usuario"
                                 value={form.usuario}
                                 autoFocus
                             />
@@ -49,6 +66,7 @@ const LoginPage = () => {
                                 className="border-slate-200 p-3 w-full rounded"
                                 onChange={handleChange}
                                 type="password"
+                                name="password"
                                 value={form.password}
                             />
                         </label>

@@ -17,6 +17,7 @@ const OllaComunAddPage = () => {
 
     const handleAgregarOllaComun = async (event) => {
         event.preventDefault()
+        console.log(form)
         const res = await addOllaComun(form)
         const { valido, mensaje } = res
         alert(mensaje)
